@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/1f1a3776-fb00-4fab-ad49-c940d6a63d1a/resourceGroups/IEM/providers/Microsoft.Web/sites/IEM-test-api",
+    "appService.deploySubpath": "."
+}
