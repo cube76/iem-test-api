@@ -3,6 +3,8 @@ const express = require('express');
 const webPush = require('web-push');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 const port = 4000;
@@ -82,6 +84,36 @@ app.post('/send-notification', (req, res) => {
     } else {
         res.status(404).json({ message: 'No subscriptions found for this user' });
     }
+});
+
+app.get('/read-file/:filename', (req, res) => {
+
+    const filename = req.params.filename; // Get the filename from the URL parameters
+
+    const filePath = path.join(__dirname+"/public", filename); // Construct the full file path
+
+    console.log("ini", __dirname)
+
+    // Read the file asynchronously
+
+    fs.readFile(filePath, 'utf8', (err, data) => {
+
+        if (err) {
+
+            // Handle error (file not found, etc.)
+
+            console.error('Error reading the file:', err);
+
+            return res.status(500).json({ error: 'Error reading the file' });
+
+        }
+
+        // Send the file content as a response
+
+        res.json({ content: data });
+
+    });
+
 });
 
 app.listen(port, '0.0.0.0', () => {
