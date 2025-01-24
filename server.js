@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const mime = require('mime-types');
 
 const app = express();
 const port = 4000;
@@ -87,34 +88,23 @@ app.post('/send-notification', (req, res) => {
 });
 
 app.get('/read-file/:filename', (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path.join(__dirname, 'public', filename);
 
-    const filename = req.params.filename; // Get the filename from the URL parameters
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ error: 'File not found' });
+    }
 
-    const filePath = path.join(__dirname+"/public", filename); // Construct the full file path
+    res.type(path.extname(filePath)); 
 
-    console.log("ini", __dirname)
-
-    // Read the file asynchronously
-
-    fs.readFile(filePath, 'utf8', (err, data) => {
-
+    res.sendFile(filePath, (err) => {
         if (err) {
-
-            // Handle error (file not found, etc.)
-
-            console.error('Error reading the file:', err);
-
-            return res.status(500).json({ error: 'Error reading the file' });
-
+            console.error('Error sending file:', err);
+            res.status(500).json({ error: 'Error serving file' });
         }
-
-        // Send the file content as a response
-
-        res.json({ content: data });
-
     });
-
 });
+
 
 app.listen(port, '0.0.0.0', () => {
 
